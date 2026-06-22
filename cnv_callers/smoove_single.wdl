@@ -2,23 +2,16 @@ version 1.0
 
 workflow SmooveSingle {
   input {
+    String sample
     File cram
-    File ref_fasta
-    File ref_fai
-    File exclude_bed
-
-    Int threads = 1
-    String docker_image = "brentp/smoove"
+    File cram_index
   }
 
   call RunSmoove {
     input:
+      sample = sample,
       cram = cram,
-      ref_fasta = ref_fasta,
-      ref_fai = ref_fai,
-      exclude_bed = exclude_bed,
-      threads = threads,
-      docker_image = docker_image
+      cram_index = cram_index,
   }
 
   output {
@@ -30,15 +23,14 @@ workflow SmooveSingle {
 
 task RunSmoove {
   input {
+    String sample
     File cram
-    File ref_fasta
-    File ref_fai
-    File exclude_bed
-    Int threads
-    String docker_image
-  }
+    File cram_index
 
-  String sample_id = basename(cram, ".cram")
+    File ref_fasta = "gs://iu-share-loni-2/ref/Homo_sapiens_assembly38.fasta"
+    File ref_fai = "gs://iu-share-loni-2/ref/Homo_sapiens_assembly38.fasta.fai"
+    File exclude_bed = "gs://intermed-files-wb-strong-apple-3019/resources/exclude.cnvnator_100bp.GRCh38.20170403"
+  }
 
   command <<<
     set -euo pipefail
@@ -48,9 +40,9 @@ task RunSmoove {
     smoove call \
       --outdir out \
       --exclude ~{exclude_bed} \
-      --name ~{sample_id} \
+      --name ~{sample} \
       --fasta ~{ref_fasta} \
-      -p ~{threads} \
+      -p 1 \
       --genotype \
       ~{cram}
 
@@ -58,14 +50,14 @@ task RunSmoove {
   >>>
 
   output {
-    File vcf = "out/~{sample_id}-smoove.genotyped.vcf.gz"
+    File vcf = "out/~{sample}-smoove.genotyped.vcf.gz"
     File vcf_index = "out/~{sample_id}-smoove.genotyped.vcf.gz.csi"
     File lumpy_cmd = "out/~{sample_id}-lumpy-cmd.sh"
   }
 
   runtime {
-    docker: docker_image
-    cpu: threads
+    docker: "brentp/smoove"
+    cpu: 1
     memory: "8G"
     disks: "local-disk 100 HDD"
   }
