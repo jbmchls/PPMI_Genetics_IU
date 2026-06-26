@@ -1,6 +1,6 @@
 version 1.0
 
-workflow SmooveSingle {
+workflow DellySV {
   input {
     String sample
     File cram
@@ -10,7 +10,7 @@ workflow SmooveSingle {
     Int disk_gb = 100
   }
 
-  call RunSmoove {
+  call RunDellySV {
     input:
       sample = sample,
       cram = cram,
@@ -20,11 +20,8 @@ workflow SmooveSingle {
   }
 
   output {
-    File delly-sv_bcf = RunDellySV.bcf
-    File delly-sv_bcf_index = RunDellySV.bcf_index
-    File smoove_vcf = RunSmoove.vcf
-    File smoove_vcf_index = RunSmoove.vcf_index
-    File lumpy_command_script = RunSmoove.lumpy_cmd
+    File delly_sv_bcf = RunDellySV.bcf
+    File delly_sv_bcf_index = RunDellySV.bcf_index
   }
 }
 
@@ -61,7 +58,7 @@ task RunDellySV {
   }
 
   runtime {
-    docker: "dellytools/delly"
+    docker: "dellytools/delly:v2.1.0"
     cpu: 1
     memory: memory
     disks: "local-disk " + disk_gb + " HDD"
