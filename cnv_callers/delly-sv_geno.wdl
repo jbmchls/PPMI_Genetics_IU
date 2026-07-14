@@ -53,8 +53,6 @@ task RunDellySVGenotype {
       -o out/~{sample}.geno.bcf \
       -x ~{exclude_bed} \
       ~{cram}
-
-    bcftools index --threads 1 out/~{sample}.geno.bcf
   >>>
 
   output {
