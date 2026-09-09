@@ -67,7 +67,6 @@ task MergeGenotypes {
     # Split the 1045 samples into manageable groups.
     split \
       -l ~{chunk_size} \
-      -d \
       -a 4 \
       "$bcf_list" \
       chunks/list_
