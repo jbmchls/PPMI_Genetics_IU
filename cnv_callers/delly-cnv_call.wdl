@@ -32,6 +32,7 @@ task RunDellyCNV {
     String sample
     File cram
     File cram_index
+    File sites_bcf
 
     String memory
     Int disk_gb
