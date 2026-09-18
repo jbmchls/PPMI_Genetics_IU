@@ -39,7 +39,7 @@ task RunDellyCNV {
 
     File ref_fasta = "gs://intermed-files-wb-strong-apple-3019/resources/Homo_sapiens_assembly38.fasta"
     File ref_fai = "gs://intermed-files-wb-strong-apple-3019/resources/Homo_sapiens_assembly38.fasta.fai"
-    File exclude_bed = "gs://intermed-files-wb-strong-apple-3019/resources/exclude.cnvnator_100bp.GRCh38.20170403.bed"
+    File blacklist = "gs://intermed-files-wb-strong-apple-3019/resources/Homo_sapiens.GRCh38.dna.primary_assembly.fa.r101.s501.blacklist.gz"
   }
 
   command <<<
@@ -48,8 +48,8 @@ task RunDellyCNV {
     mkdir -p out
 
     delly cnv \
-      -o out/~{sample}.cnv.delly.bcf \
-      -x ~{exclude_bed} \
+      -o out/~{sample}.delly.cnv.bcf \
+      -m ~{blacklist} \
       -g ~{ref_fasta} \
       -l ~{sites_bcf} \
       ~{cram}
@@ -57,8 +57,8 @@ task RunDellyCNV {
   >>>
 
   output {
-    File bcf = "out/~{sample}.cnv.delly.bcf"
-    File bcf_index = "out/~{sample}.cnv.delly.bcf.csi"
+    File bcf = "out/~{sample}.delly.cnv.bcf"
+    File bcf_index = "out/~{sample}.delly.cnv.bcf.csi"
   }
 
   runtime {
