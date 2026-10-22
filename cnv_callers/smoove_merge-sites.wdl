@@ -9,7 +9,7 @@ workflow SmooveMergeSites {
     Int cpu = 4
   }
 
-  Array[File] vcf_paths = read_lines(smoove_vcf_manifest)
+  Array[String] vcf_paths = read_lines(smoove_vcf_manifest)
   Array[File] vcfs = vcf_paths
   Array[File] indexes = suffix(".csi", vcf_paths)
 
