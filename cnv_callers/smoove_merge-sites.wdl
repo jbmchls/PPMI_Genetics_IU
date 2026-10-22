@@ -3,15 +3,15 @@ version 1.0
 workflow SmooveMergeSites {
   input {
     File smoove_vcf_manifest
+    File smoove_index_manifest
 
     String memory = "32G"
     Int disk_gb = 300
     Int cpu = 4
   }
 
-  Array[String] vcf_paths = read_lines(smoove_vcf_manifest)
-  Array[File] vcfs = vcf_paths
-  Array[File] indexes = suffix(".csi", vcf_paths)
+  Array[File] vcfs = read_lines(smoove_vcf_manifest)
+  Array[File] indexes = read_lines(smoove_index_manifest)
 
   call MergeSites {
     input:
