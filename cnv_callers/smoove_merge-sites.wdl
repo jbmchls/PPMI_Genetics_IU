@@ -25,6 +25,8 @@ workflow SmooveMergeSites {
   output {
     File smoove_sites_vcf = MergeSites.sites_vcf
     File smoove_sites_vcf_index = MergeSites.sites_vcf_index
+    File smoove_counts_html = MergeSites.smoove_counts_html
+    
   }
 }
 
@@ -61,12 +63,19 @@ task MergeSites {
       --outdir out \
       in/*.genotyped.vcf.gz
 
-    bcftools index -f out/merged.sites.vcf.gz
+    bcftools sort \
+      -T "$TMPDIR" \
+      -Oz \
+      -o out/merged.sites.sorted.vcf.gz \
+      out/merged.sites.vcf.gz
+
+    bcftools index -f out/merged.sites.sorted.vcf.gz
   >>>
 
   output {
-    File sites_vcf = "out/merged.sites.vcf.gz"
-    File sites_vcf_index = "out/merged.sites.vcf.gz.csi"
+    File sites_vcf = "out/merged.sites.sorted.vcf.gz"
+    File sites_vcf_index = "out/merged.sites.sorted.vcf.gz.csi"
+    File smoove_counts_html = "out/merged.smoove-counts.html"
   }
 
   runtime {
